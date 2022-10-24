@@ -7,9 +7,12 @@
 GEVmodel(
   Y,
   X = NULL,
-  n.sims = 1e+05,
   inits = NULL,
-  prior = c(100^2, 100^2, 3, 1/100^2, 100^2, 0.5)
+  prior = c(100^2, 100^2, 3, 1/100^2, 100^2, 0.5),
+  n.sims = 1e+05,
+  n.thin = 1,
+  n.burnin = 10000,
+  n.report = 10000
 )
 }
 \arguments{
@@ -17,13 +20,15 @@ GEVmodel(
 
 \item{X}{MATRIX of covariates (design matrix without intercept)}
 
-\item{n.sims}{Number of simulations}
-
 \item{inits}{Initial values (\eqn{\sigma} transformed scale \eqn{(-\infty,\infty)})}
 
 \item{prior}{Vector. Variance of the zero-mean normal prior for 
 (1) \eqn{\beta_0}, (2) \eqn{\log \sigma}, (3) \eqn{\xi}, and value of
 (4) \eqn{\tau_i^2}, (5) \eqn{c_i^2 \tau_i^2}, and (6) \eqn{p_i}}
+
+\item{n.sims, n.thin, n.burnin, n.report}{(i) Number of iterations. (ii) 
+Thinning rate. (iii) Number of iterations discarded at the beginning. (iv)
+Report the number of iterations rate.}
 }
 \value{
 A \code{"GEVmodel"} list with elements:

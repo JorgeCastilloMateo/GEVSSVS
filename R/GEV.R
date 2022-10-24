@@ -9,25 +9,35 @@
 #' 
 #' @param Y VECTOR of data
 #' @param X MATRIX of covariates (design matrix without intercept)
-#' @param n.sims Number of simulations
 #' @param inits Initial values (\eqn{\sigma} transformed scale \eqn{(-\infty,\infty)})
 #' @param prior Vector. Variance of the zero-mean normal prior for 
 #'   (1) \eqn{\beta_0}, (2) \eqn{\log \sigma}, (3) \eqn{\xi}, and value of
 #'   (4) \eqn{\tau_i^2}, (5) \eqn{c_i^2 \tau_i^2}, and (6) \eqn{p_i}
+#' @param n.sims,n.thin,n.burnin,n.report (i) Number of iterations. (ii) 
+#'   Thinning rate. (iii) Number of iterations discarded at the beginning. (iv)
+#'   Report the number of iterations rate.
 #' @return A \code{"GEVmodel"} list with elements:
 #'   \item{params}{Matrix where rows are simulations and cols are parameters
 #'   \deqn{\beta_0,\sigma,\xi,\beta_1,\ldots,\beta_p,\gamma_1,\ldots,\gamma_p}}
 #'   \item{\code{y}}{Data fitted}
 #'   \item{\code{x}}{Covariates}
 #' @export 
-GEVmodel <- function(Y, X = NULL, n.sims = 100000, inits = NULL, prior = c(100^2, 100^2, 3, 1 / 100^2, 100^2, 0.5)) {
+GEVmodel <- function(Y, 
+                     X = NULL, 
+                     inits = NULL, 
+                     prior = c(100^2, 100^2, 3, 1 / 100^2, 100^2, 0.5),
+                     n.sims = 100000,
+                     n.thin = 1,
+                     n.burnin = 10000,
+                     n.report = 10000
+                     ) {
   
   T <- length(Y)
   p <- ifelse(is.null(X), 0, ncol(X))
   d <- 3 + 2 * p
   epsilon <- 0.000001
-  keepBurnin <- matrix(nrow = 10000, ncol = d-p)
-  keep   <- matrix(nrow = n.sims, ncol = d)
+  keepBurnin <- matrix(nrow = 10000 + n.burnin, ncol = d-p)
+  keep   <- matrix(nrow = n.sims / n.thin, ncol = d)
   if (p == 0) {
     colnames(keep) <- c("mu", "sigma", "xi")
     X <- matrix(0, nrow = T, ncol = 1)
@@ -172,11 +182,33 @@ GEVmodel <- function(Y, X = NULL, n.sims = 100000, inits = NULL, prior = c(100^2
     stats::cov(keepBurnin[6001:10000, ])
   )
   
+  # burnin
+  if (n.burnin < 1000) n.burnin <- 1000
+  for (b in 10001:(10000 + n.burnin)) {
+    params <- rwBmetropolis(params, Sigma[[2]] + I, T, p, Y, X, prior)
+    if (p != 0) {
+      for (i in 1:p) {
+        a <- pi * stats::dnorm(params[3 + i], mean = 0, sd = ci_x_taui)
+        u <- (1 - pi) * stats::dnorm(params[3 + i], mean = 0, sd = taui)
+        params[3 + p + i] <- stats::rbinom(1, size = 1, prob = a / (a + u))
+      }
+    }
+    
+    Sigma <- MuSigmaUpdate(params[1:(3+p)], Sigma[[1]], Sigma[[2]], b - 9950)
+    
+    keepBurnin[b, ] <- params[1:(3+p)]
+  }
+  
+  Sigma <- list(
+    colMeans(keepBurnin[10000 + (1:n.burnin), ]),
+    stats::cov(keepBurnin[10000 + (1:n.burnin), ])
+  )
+  
   print("Burn-in finished")
   
   # FINAL
   for (b in 1:n.sims) {
-    if (b %% 1000 == 0) print(paste("Iteration:", b))
+    if (b %% n.report == 0) print(paste("Iteration:", b))
     
     params <- rwBmetropolis(params, Sigma[[2]] + I, T, p, Y, X, prior)
     if (p != 0) {
@@ -189,7 +221,10 @@ GEVmodel <- function(Y, X = NULL, n.sims = 100000, inits = NULL, prior = c(100^2
     
     Sigma <- MuSigmaUpdate(params[1:(3+p)], Sigma[[1]], Sigma[[2]], b + 50)
     
-    keep[b, ] <- params[-(d+1)]
+    if (b %% n.thin == 0) {
+      keep[b / n.thin, ] <- params[-(d+1)]
+    }
+    
   }
   
   keep[,2] <- exp(keep[,2])

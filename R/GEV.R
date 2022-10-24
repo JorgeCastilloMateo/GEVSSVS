@@ -5,7 +5,8 @@
 #' @importFrom stats rbinom
 #' 
 #' @description 
-#' This function fits the GEV model 
+#' This function fits the GEV model with SSVS.
+#' Set the prior for \eqn{p_i} to 1 for a usual GEV model.
 #' 
 #' @param Y VECTOR of data
 #' @param X MATRIX of covariates (design matrix without intercept)
@@ -25,7 +26,7 @@
 GEVmodel <- function(Y, 
                      X = NULL, 
                      inits = NULL, 
-                     prior = c(100^2, 100^2, 3, 1 / 100^2, 100^2, 0.5),
+                     prior = c(10^2, 10^2, 1, 0.023^2, 0.23^2, 0.5),
                      n.sims = 100000,
                      n.thin = 1,
                      n.burnin = 10000,

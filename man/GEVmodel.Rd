@@ -8,7 +8,7 @@ GEVmodel(
   Y,
   X = NULL,
   inits = NULL,
-  prior = c(100^2, 100^2, 3, 1/100^2, 100^2, 0.5),
+  prior = c(10^2, 10^2, 1, 0.023^2, 0.23^2, 0.5),
   n.sims = 1e+05,
   n.thin = 1,
   n.burnin = 10000,
@@ -38,5 +38,6 @@ A \code{"GEVmodel"} list with elements:
   \item{\code{x}}{Covariates}
 }
 \description{
-This function fits the GEV model
+This function fits the GEV model with SSVS.
+Set the prior for \eqn{p_i} to 1 for a usual GEV model.
 }

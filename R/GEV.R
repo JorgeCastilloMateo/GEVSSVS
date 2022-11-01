@@ -221,7 +221,7 @@ GEVmodel <- function(Y,
       }
     }
     
-    Sigma <- MuSigmaUpdate(params[1:(3+p)], Sigma[[1]], Sigma[[2]], b + 50)
+    Sigma <- MuSigmaUpdate(params[1:(3+p)], Sigma[[1]], Sigma[[2]], b + n.burnin / 2)
     
     if (b %% n.thin == 0) {
       keep[b / n.thin, ] <- params[-(d+1)]

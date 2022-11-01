@@ -8,6 +8,7 @@ GEVmodel(
   Y,
   X = NULL,
   inits = NULL,
+  const = 1,
   prior = c(10^2, 10^2, 1, 0.023^2, 0.23^2, 0.5),
   n.sims = 1e+05,
   n.thin = 1,
@@ -21,6 +22,8 @@ GEVmodel(
 \item{X}{MATRIX of covariates (design matrix without intercept)}
 
 \item{inits}{Initial values (\eqn{\sigma} transformed scale \eqn{(-\infty,\infty)})}
+
+\item{const}{Constant to scale the variance of the proposal distribution}
 
 \item{prior}{Vector. Variance of the zero-mean normal prior for 
 (1) \eqn{\beta_0}, (2) \eqn{\log \sigma}, (3) \eqn{\xi}, and value of

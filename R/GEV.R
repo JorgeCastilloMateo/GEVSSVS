@@ -11,6 +11,7 @@
 #' @param Y VECTOR of data
 #' @param X MATRIX of covariates (design matrix without intercept)
 #' @param inits Initial values (\eqn{\sigma} transformed scale \eqn{(-\infty,\infty)})
+#' @param const Constant to scale the variance of the proposal distribution
 #' @param prior Vector. Variance of the zero-mean normal prior for 
 #'   (1) \eqn{\beta_0}, (2) \eqn{\log \sigma}, (3) \eqn{\xi}, and value of
 #'   (4) \eqn{\tau_i^2}, (5) \eqn{c_i^2 \tau_i^2}, and (6) \eqn{p_i}
@@ -26,6 +27,7 @@
 GEVmodel <- function(Y, 
                      X = NULL, 
                      inits = NULL, 
+                     const = 1,
                      prior = c(10^2, 10^2, 1, 0.023^2, 0.23^2, 0.5),
                      n.sims = 100000,
                      n.thin = 1,
@@ -36,7 +38,7 @@ GEVmodel <- function(Y,
   T <- length(Y)
   p <- ifelse(is.null(X), 0, ncol(X))
   d <- 3 + 2 * p
-  sd <- 2.4^2 / (3 + p)
+  sd <- const * 2.4^2 / (3 + p)
   epsilon <- 1e-04
   keepBurnin <- matrix(nrow = 10000 + n.burnin, ncol = d-p)
   keep   <- matrix(nrow = n.sims / n.thin, ncol = d)

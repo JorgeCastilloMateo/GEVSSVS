@@ -36,7 +36,8 @@ GEVmodel <- function(Y,
   T <- length(Y)
   p <- ifelse(is.null(X), 0, ncol(X))
   d <- 3 + 2 * p
-  epsilon <- 0.000001
+  sd <- 2.4^2 / (3 + p)
+  epsilon <- 1e-04
   keepBurnin <- matrix(nrow = 10000 + n.burnin, ncol = d-p)
   keep   <- matrix(nrow = n.sims / n.thin, ncol = d)
   if (p == 0) {
@@ -62,7 +63,7 @@ GEVmodel <- function(Y,
 
   # for 1
   for (b in 1:25) {
-    params <- rwBmetropolis(params, I, T, p, Y, X, prior)
+    params <- rwBmetropolis(params, sd * I, T, p, Y, X, prior)
     if (p != 0) {
       for (i in 1:p) {
         a <- pi * stats::dnorm(params[3 + i], mean = 0, sd = ci_x_taui)
@@ -80,7 +81,7 @@ GEVmodel <- function(Y,
   
   # for 2
   for (b in 26:100) {
-    params <- rwBmetropolis(params, Sigma[[2]] + I, T, p, Y, X, prior)
+    params <- rwBmetropolis(params, sd * (Sigma[[2]] + I), T, p, Y, X, prior)
     if (p != 0) {
       for (i in 1:p) {
         a <- pi * stats::dnorm(params[3 + i], mean = 0, sd = ci_x_taui)
@@ -101,7 +102,7 @@ GEVmodel <- function(Y,
   
   # for 3
   for (b in 101:400) {
-    params <- rwBmetropolis(params, Sigma[[2]] + I, T, p, Y, X, prior)
+    params <- rwBmetropolis(params, sd * (Sigma[[2]] + I), T, p, Y, X, prior)
     if (p != 0) {
       for (i in 1:p) {
         a <- pi * stats::dnorm(params[3 + i], mean = 0, sd = ci_x_taui)
@@ -122,7 +123,7 @@ GEVmodel <- function(Y,
   
   # for 4
   for (b in 401:1000) {
-    params <- rwBmetropolis(params, Sigma[[2]] + I, T, p, Y, X, prior)
+    params <- rwBmetropolis(params, sd * (Sigma[[2]] + I), T, p, Y, X, prior)
     if (p != 0) {
       for (i in 1:p) {
         a <- pi * stats::dnorm(params[3 + i], mean = 0, sd = ci_x_taui)
@@ -143,7 +144,7 @@ GEVmodel <- function(Y,
   
   # for 5
   for (b in 1001:2000) {
-    params <- rwBmetropolis(params, Sigma[[2]] + I, T, p, Y, X, prior)
+    params <- rwBmetropolis(params, sd * (Sigma[[2]] + I), T, p, Y, X, prior)
     if (p != 0) {
       for (i in 1:p) {
         a <- pi * stats::dnorm(params[3 + i], mean = 0, sd = ci_x_taui)
@@ -164,7 +165,7 @@ GEVmodel <- function(Y,
   
   # for 6
   for (b in 2001:10000) {
-    params <- rwBmetropolis(params, Sigma[[2]] + I, T, p, Y, X, prior)
+    params <- rwBmetropolis(params, sd * (Sigma[[2]] + I), T, p, Y, X, prior)
     if (p != 0) {
       for (i in 1:p) {
         a <- pi * stats::dnorm(params[3 + i], mean = 0, sd = ci_x_taui)
@@ -186,7 +187,7 @@ GEVmodel <- function(Y,
   # burnin
   if (n.burnin < 1000) n.burnin <- 1000
   for (b in 10001:(10000 + n.burnin)) {
-    params <- rwBmetropolis(params, Sigma[[2]] + I, T, p, Y, X, prior)
+    params <- rwBmetropolis(params, sd * (Sigma[[2]] + I), T, p, Y, X, prior)
     if (p != 0) {
       for (i in 1:p) {
         a <- pi * stats::dnorm(params[3 + i], mean = 0, sd = ci_x_taui)
@@ -211,7 +212,7 @@ GEVmodel <- function(Y,
   for (b in 1:n.sims) {
     if (b %% n.report == 0) print(paste("Iteration:", b))
     
-    params <- rwBmetropolis(params, Sigma[[2]] + I, T, p, Y, X, prior)
+    params <- rwBmetropolis(params, sd * (Sigma[[2]] + I), T, p, Y, X, prior)
     if (p != 0) {
       for (i in 1:p) {
         a <- pi * stats::dnorm(params[3 + i], mean = 0, sd = ci_x_taui)

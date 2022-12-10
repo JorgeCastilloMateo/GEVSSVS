@@ -3,10 +3,11 @@
 \docType{package}
 \name{GEVSSVS}
 \alias{GEVSSVS}
-\title{GEV model with SSVS}
+\title{GEV-SSVS regression}
 \description{
-GEV model with Stochastic Search Variable Selection
+Generalized Extreme Value (GEV) regression with Stochastic Search Variable 
+Selection (SSVS).
 }
 \author{
-Jorge Castillo-mateo <jorgecm@unizar.es>
+Jorge Castillo-mateo <jorgecastillomateo@gmail.com>
 }

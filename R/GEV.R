@@ -1,25 +1,37 @@
-#' GEV model with SSVS
+#' GEV-SSVS model
 #' 
 #' @importFrom stats cov
 #' @importFrom stats dnorm
 #' @importFrom stats rbinom
 #' 
 #' @description 
-#' This function fits the GEV model with SSVS.
-#' Set the prior for \eqn{p_i} to 1 for a usual GEV model.
+#' This function fits the GEV-SSVS model in a Bayesian framework using MCMC.
 #' 
-#' @param Y VECTOR of data
+#' @details 
+#' The fitting algorithm is an adaptive Metropolis-within-Gibbs MCMC algorithm.
+#' It has a preset adaptation period. In addition, a burn-in period can be 
+#' established in the arguments.
+#' 
+#' @note 
+#' Set the prior for \eqn{p_i} to \eqn{1} for a usual GEV model, then the 5th 
+#' element of \code{prior} is the prior variance of the parameters associated 
+#' with the covariates.
+#' 
+#' @param Y VECTOR of responses
 #' @param X MATRIX of covariates (design matrix without intercept)
-#' @param inits Initial values (\eqn{\sigma} transformed scale \eqn{(-\infty,\infty)})
-#' @param const Constant to scale the variance of the proposal distribution
+#' @param inits Initial values (\eqn{\sigma} in log scale 
+#'   \eqn{(-\infty,\infty)})
+#' @param const Constant to scale the adaptive variance of the proposal 
+#'   distribution in the MCMC
 #' @param prior Vector. Variance of the zero-mean normal prior for 
 #'   (1) \eqn{\beta_0}, (2) \eqn{\log \sigma}, (3) \eqn{\xi}, and value of
 #'   (4) \eqn{\tau_i^2}, (5) \eqn{c_i^2 \tau_i^2}, and (6) \eqn{p_i}
-#' @param n.sims,n.thin,n.burnin,n.report (i) Number of iterations. (ii) 
-#'   Thinning rate. (iii) Number of iterations discarded at the beginning. (iv)
-#'   Report the number of iterations rate.
+#' @param n.sims,n.thin,n.burnin,n.report (i) Number of iterations not 
+#'   discarded. (ii) Thinning rate. (iii) Number of iterations discarded at the 
+#'   beginning. (iv) Report the number of iterations rate.
 #' @return A \code{"GEVmodel"} list with elements:
-#'   \item{params}{Matrix where rows are simulations and cols are parameters
+#'   \item{params}{Matrix where rows are MCMC simulations and cols are 
+#'     parameters:
 #'   \deqn{\beta_0,\sigma,\xi,\beta_1,\ldots,\beta_p,\gamma_1,\ldots,\gamma_p}}
 #'   \item{\code{y}}{Data fitted}
 #'   \item{\code{x}}{Covariates}
@@ -28,7 +40,7 @@ GEVmodel <- function(Y,
                      X = NULL, 
                      inits = NULL, 
                      const = 1,
-                     prior = c(10^2, 10^2, 1, 0.023^2, 0.23^2, 0.5),
+                     prior = c(10^2, 10^2, 1, 0.05^2, 5^2, 0.5),
                      n.sims = 100000,
                      n.thin = 1,
                      n.burnin = 10000,

@@ -7,11 +7,12 @@
 DIC(model)
 }
 \arguments{
-\item{model}{object from \code{\link{GEVmodel}}}
+\item{model}{Object from \code{\link{GEVmodel}}}
 }
 \value{
-DIC
+DIC value
 }
 \description{
-This function calculates the DIC of the GEV \code{model}
+This function calculates the DIC of the models retuned by the 
+\code{\link{GEVmodel}} function.
 }

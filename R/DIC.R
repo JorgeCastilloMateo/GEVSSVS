@@ -3,10 +3,11 @@
 #' @importFrom extraDistr dgev
 #' 
 #' @description 
-#' This function calculates the DIC of the GEV \code{model} 
+#' This function calculates the DIC of the models retuned by the 
+#' \code{\link{GEVmodel}} function.
 #' 
-#' @param model object from \code{\link{GEVmodel}}
-#' @return DIC
+#' @param model Object from \code{\link{GEVmodel}}
+#' @return DIC value
 #' @export 
 DIC <- function(model) {
   
@@ -19,15 +20,36 @@ DIC <- function(model) {
   mcmc_mean <- colMeans(model$params)
   
   deviance <- rep(0, n.sims) 
-  for (n in 1:n.sims) {
-    deviance[n] <- - 2 * sum(extraDistr::dgev(Y, mu = model$params[n, 1] + X %*% model$params[n, 3 + 1:p], sigma = model$params[n, 2], xi = model$params[n, 3], log = TRUE))
+  
+  if (p == 1 && all(X == 0)) {
+    for (n in 1:n.sims) {
+      deviance[n] <- - 2 * sum(extraDistr::dgev(Y, 
+        mu = model$params[n, 1], 
+        sigma = model$params[n, 2], 
+        xi = model$params[n, 3], log = TRUE))
+    }
+    
+    DhatTheta <- - 2 * sum(extraDistr::dgev(Y, 
+      mu = mcmc_mean[1], 
+      sigma = mcmc_mean[2], 
+      xi = mcmc_mean[3], log = TRUE))
+  } else {
+    for (n in 1:n.sims) {
+      deviance[n] <- - 2 * sum(extraDistr::dgev(Y, 
+        mu = model$params[n, 1] + X %*% model$params[n, 3 + 1:p], 
+        sigma = model$params[n, 2], 
+        xi = model$params[n, 3], log = TRUE))
+    }
+    
+    DhatTheta <- - 2 * sum(extraDistr::dgev(Y, 
+        mu = mcmc_mean[1] + X %*% mcmc_mean[3 + 1:p], 
+        sigma = mcmc_mean[2], 
+        xi = mcmc_mean[3], log = TRUE))
   }
   
-  aux <- - 2 * sum(extraDistr::dgev(Y, mu = mcmc_mean[1] + X %*% mcmc_mean[3 + 1:p], sigma = mcmc_mean[2], xi = mcmc_mean[3], log = TRUE))
+  pDIC <- - DhatTheta + mean(deviance)
   
-  pDIC <- - aux + mean(deviance)
-  
-  DIC <- aux + 2 * pDIC
+  DIC <- DhatTheta + 2 * pDIC
   
   return(DIC)
 }

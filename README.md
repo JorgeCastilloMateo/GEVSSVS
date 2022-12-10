@@ -1,5 +1,5 @@
 # GEVSSVS
-GEV model with SSVS
+GEV-SSVS regression
 
 ## Installation
 You can install the package from

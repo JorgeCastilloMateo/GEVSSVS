@@ -1,17 +1,18 @@
 Package: GEVSSVS
 Type: Package
 Title: GEV-SSVS regression
-Version: 0.0.5
-Date: 2022-12-10
+Version: 0.0.6
+Date: 2023-03-27
 Authors@R: c(
   person("Jorge", "Castillo-Mateo", role = c("aut","cre","cph"), email = "jorgecastillomateo@gmail.com", comment = c(ORCID = "0000-0003-3859-0248"))
     )
 Author: Jorge Castillo-Mateo [aut, cre, cph] (<https://orcid.org/0000-0003-3859-0248>)
 Maintainer: Jorge Castillo-Mateo <jorgecastillomateo@gmail.com>
 Description: Generalized Extreme Value (GEV) regression with Stochastic Search 
-  Variable Selection (SSVS).
+  Variable Selection (SSVS). Details about the method can be found in 
+  Castillo-Mateo et al. (2023) <doi:10.3390/math11030759>.
 License: GPL (>= 2)
 Imports: extraDistr, Rcpp (>= 1.0.7), stats
 LinkingTo: Rcpp, RcppArmadillo
 Encoding: UTF-8
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3

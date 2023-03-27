@@ -56,3 +56,8 @@ Set the prior for \eqn{p_i} to \eqn{1} for a usual GEV model, then the 5th
 element of \code{prior} is the prior variance of the parameters associated 
 with the covariates.
 }
+\references{
+Castillo-Mateo J, Asín J, Cebrián AC, Mateo-Lázaro J, Abaurrea J (2023). 
+“Bayesian variable selection in generalized extreme value regression: Modeling annual maximum temperature.” 
+\emph{Mathematics}, \strong{11}(3), 759. \doi{10.3390/math11030759}.
+}

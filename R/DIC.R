@@ -8,6 +8,10 @@
 #' 
 #' @param model Object from \code{\link{GEVmodel}}
 #' @return DIC value
+#' @references 
+#' Castillo-Mateo J, Asín J, Cebrián AC, Mateo-Lázaro J, Abaurrea J (2023). 
+#' “Bayesian variable selection in generalized extreme value regression: Modeling annual maximum temperature.” 
+#' \emph{Mathematics}, \strong{11}(3), 759. \doi{10.3390/math11030759}.
 #' @export 
 DIC <- function(model) {
   
